@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Üyelik Sistemi</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 40px auto; }
+    h2 { text-align: center; }
+    form { margin-bottom: 30px; border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+    input { width: 100%; padding: 8px; margin: 8px 0; }
+    button { padding: 8px 14px; cursor: pointer; }
+    .msg { margin-top: 10px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h2>Kayıt Ol</h2>
+  <form id="register-form">
+    <input type="text" id="name" placeholder="İsim" required />
+    <input type="email" id="email" placeholder="E-posta" required />
+    <input type="password" id="password" placeholder="Şifre" required />
+    <button type="submit">Kayıt Ol</button>
+    <div id="register-msg" class="msg"></div>
+  </form>
+
+  <h2>Giriş Yap</h2>
+  <form id="login-form">
+    <input type="email" id="login-email" placeholder="E-posta" required />
+    <input type="password" id="login-password" placeholder="Şifre" required />
+    <button type="submit">Giriş Yap</button>
+    <div id="login-msg" class="msg"></div>
+  </form>
+
+  <script>
+    const API_URL = "http://localhost:3000";
+
+    // Kayıt formu
+    document.getElementById("register-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const msg = document.getElementById("register-msg");
+
+      msg.textContent = "Kayıt yapılıyor...";
+      try {
+        const res = await fetch(API_URL + "/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
+        const data = await res.json();
+        msg.textContent = data.message || "Bir şeyler oldu.";
+      } catch (err) {
+        msg.textContent = "Sunucuya bağlanırken hata oluştu.";
+      }
+    });
+
+    // Login formu
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+      const msg = document.getElementById("login-msg");
+
+      msg.textContent = "Giriş yapılıyor...";
+      try {
+        const res = await fetch(API_URL + "/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        msg.textContent = data.message || "Bir şeyler oldu.";
+      } catch (err) {
+        msg.textContent = "Sunucuya bağlanırken hata oluştu.";
+      }
+    });
+  </script>
+</body>
+</html>
